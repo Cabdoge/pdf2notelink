@@ -1,0 +1,19 @@
+{
+  "name": "pdf2notelink",
+  "version": "0.2.1",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.cjs",
+    "build": "python3 scripts/build.py",
+    "validate": "python3 scripts/validate_release.py"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Cabdoge/pdf2notelink.git"
+  },
+  "homepage": "https://github.com/Cabdoge/pdf2notelink",
+  "bugs": {
+    "url": "https://github.com/Cabdoge/pdf2notelink/issues"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "manifest_version": 2,
+  "name": "pdf2notelink",
+  "version": "0.2.1",
+  "description": "点击 PDF 高亮，在原生侧栏打开引用它的 Zotero 笔记。",
+  "applications": {
+    "zotero": {
+      "id": "highlight-notes@local.zotero",
+      "update_url": "https://github.com/Cabdoge/pdf2notelink/releases/latest/download/updates.json",
+      "strict_min_version": "10.0.5",
+      "strict_max_version": "10.0.6"
+    }
+  },
+  "author": "Cabdoge",
+  "homepage_url": "https://github.com/Cabdoge/pdf2notelink"
+}

@@ -1,0 +1,8 @@
+.DS_Store
+/dist/
+/node_modules/
+/.venv/
+__pycache__/
+*.pyc
+*.log
+/tests/runtime-report*.json
