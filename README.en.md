@@ -14,7 +14,7 @@ Click a highlight in a Zotero PDF to open the note that references it in the nat
 2. In Zotero, open **Tools → Plugins**, click the gear menu, and choose **Install Plugin From File…**.
 3. Select the downloaded XPI. You can install it over an earlier version.
 
-**Compatibility: Zotero 10.0.5–10.0.6.** Verified on macOS; user testing has also confirmed that the plugin works on **Windows 11**. Linux has not been tested. Use PDF tabs in the main Zotero window. Separate reader windows are not supported.
+**Compatibility: Zotero 10.0.5–10.0.6 on macOS and Windows 11.** Linux has not been tested. Use PDF tabs in the main Zotero window. Separate reader windows are not supported.
 
 ### Upgrading from a local test build
 
