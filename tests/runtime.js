@@ -193,7 +193,7 @@
       const find = app.adapter.referenceNodes; app.adapter.referenceNodes = () => [];
       try {
         await app.activate(reader, annotations[1].key);
-        assert(text().includes('未能定位引用') && activeID() === c.id, 'failure feedback incorrect');
+        assert(text().includes(app.strings.locationFailed) && activeID() === c.id, 'failure feedback incorrect');
         noSidebarPanel();
       } finally { app.adapter.referenceNodes = find; }
     });

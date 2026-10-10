@@ -1,3 +1,5 @@
+**简体中文** | [English](README.en.md)
+
 # pdf2notelink
 
 [![CI](https://github.com/Cabdoge/pdf2notelink/actions/workflows/ci.yml/badge.svg)](https://github.com/Cabdoge/pdf2notelink/actions/workflows/ci.yml)
@@ -5,8 +7,6 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 点击 Zotero PDF 正文中的高亮，在原生侧栏打开引用它的笔记。多篇关联笔记以高亮旁的紧凑浮层呈现，侧栏空间留给笔记正文。
-
-**A Zotero plugin that opens notes linked to a PDF highlight.** A single match opens directly; multiple matches appear in a compact chooser beside the highlight. No match leaves the sidebar untouched.
 
 ## 安装
 
@@ -32,6 +32,8 @@
 - 点击外部、按 Esc、滚动 PDF 或切换标签页会关闭浮层。同一笔记有多处引用时默认定位第一处。
 
 单纯复制文字不会建立关联；只有页码/坐标而没有批注 key 的旧引用无法精确反查，可重新将高亮拖入笔记。暂不支持手动绑定、Obsidian/Markdown 笔记、跨资料库关联或嵌入式 PDF 批注导入。
+
+从 0.2.2 起，插件文案跟随 Zotero 的界面语言：中文界面显示中文，其他语言显示英文。切换 Zotero 语言并重启后生效。英文界面的真实截图见 [English README](README.en.md#screenshots)。
 
 ## 效果演示
 

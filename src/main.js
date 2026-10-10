@@ -2,6 +2,20 @@
   "use strict";
   const H = global.HighlightNotes;
   const NS = "http://www.w3.org/1999/xhtml";
+  const UI_STRINGS = {
+    en: {
+      relatedNotes: "Linked notes",
+      untitledNote: "Untitled note",
+      locationFailed: "The note is open, but the reference could not be located.",
+      openFailed: "Unable to open the linked note. Please try again.",
+    },
+    zh: {
+      relatedNotes: "关联笔记",
+      untitledNote: "无标题笔记",
+      locationFailed: "笔记已打开，但未能定位引用。",
+      openFailed: "关联笔记打开失败，请重试。",
+    },
+  };
   class App {
     constructor(Z) {
       this.Z = Z;
@@ -13,6 +27,9 @@
       this.adapter = new H.Adapter(Z,
         (reader, key, point) => this.activate(reader, key, point).catch(e => this.error(reader, e)),
         reader => this.cancel(reader));
+    }
+    get strings() {
+      return UI_STRINGS[/^zh(?:[-_]|$)/i.test(this.Z.locale || "") ? "zh" : "en"];
     }
     start() {
       this.alive = true;
@@ -60,7 +77,7 @@
       if (note.deleted || note.parentItem?.deleted) { this.index.remove(note.id); return; }
       const win = this.Z.getMainWindow();
       const doc = new win.DOMParser().parseFromString(note.getNote(), "text/html");
-      this.index.replace({ id: note.id, libraryID: note.libraryID, title: note.getNoteTitle() || "无标题笔记" },
+      this.index.replace({ id: note.id, libraryID: note.libraryID, title: note.getNoteTitle() || this.strings.untitledNote },
         H.extractReferences(doc, uri => this.resolveURI(uri)));
     }
     async ensureLibrary(libraryID) {
@@ -102,7 +119,7 @@
       const panel = this.element(doc, "section");
       panel.className = "highlight-notes-popup";
       panel.setAttribute("role", "dialog");
-      panel.setAttribute("aria-label", "关联笔记");
+      panel.setAttribute("aria-label", this.strings.relatedNotes);
       panel.style.cssText = "position:fixed;z-index:2147483647;box-sizing:border-box;width:290px;max-width:calc(100vw - 16px);max-height:min(320px, calc(100vh - 16px));overflow:auto;padding:8px;border:1px solid color-mix(in srgb, CanvasText 22%, transparent);border-radius:10px;background:Canvas;color:CanvasText;color-scheme:light dark;box-shadow:0 6px 22px #0003;font:13px/1.5 system-ui,sans-serif;";
       const title = this.element(doc, "div", text);
       title.style.cssText = "font-weight:600;padding:4px 6px 8px;border-bottom:1px solid color-mix(in srgb, CanvasText 15%, transparent);margin-bottom:4px;";
@@ -172,7 +189,7 @@
       // Zero matches: no UI and no changes to the current sidebar/note.
     }
     candidates(reader, token, id, matches) {
-      const panel = this.popup(reader, `关联笔记 · ${matches.length}`);
+      const panel = this.popup(reader, `${this.strings.relatedNotes} · ${matches.length}`);
       for (const match of matches) {
         const button = this.element(panel.ownerDocument, "button");
         button.type = "button";
@@ -216,11 +233,11 @@
         }
         await this.Z.Promise.delay(50);
       }
-      if (this.valid(reader, token)) this.popup(reader, "笔记已打开，但未能定位引用。");
+      if (this.valid(reader, token)) this.popup(reader, this.strings.locationFailed);
     }
     error(reader, error) {
       this.Z.logError(error);
-      if (this.alive && this.adapter.isActive(reader)) this.popup(reader, "关联笔记打开失败，请重试。");
+      if (this.alive && this.adapter.isActive(reader)) this.popup(reader, this.strings.openFailed);
     }
     stop() {
       this.alive = false;
