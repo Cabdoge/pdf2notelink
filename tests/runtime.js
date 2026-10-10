@@ -4,7 +4,7 @@
   const root = TEST_ROOT;
   if (!/^\/private\/tmp\/zotero-highlight-notes-test(?:-[A-Za-z0-9_-]+)?$/.test(root) ||
       Z.Prefs.get("dataDir") !== root + "/data") throw Error("Refusing runtime tests outside isolated data directory");
-  const report = { version: Z.version, tests: [], status: "running" };
+  const report = { version: Z.version, locale: Z.locale, platform: Z.isMac ? 'macOS' : Z.isWin ? 'Windows' : 'Linux', tests: [], status: "running" };
   const write = () => Z.File.putContentsAsync(root + "/report.json", JSON.stringify(report, null, 2));
   const check = async (name, fn) => {
     try { await fn(); report.tests.push({ name, pass: true }); }
@@ -67,6 +67,10 @@
       return node;
     };
     const text = () => panel()?.textContent || '';
+    const preference = HighlightNotes.Settings.key;
+    const modifier = Z.isMac ? Components.interfaces.nsIDOMWindowUtils.MODIFIER_META : Components.interfaces.nsIDOMWindowUtils.MODIFIER_CONTROL;
+    const setMode = mode => Z.Prefs.set(preference, mode, true);
+    setMode('click');
     const click = async (index, { drag = false, modifiers = 0 } = {}) => {
       // Bring the target into view and dismiss the native floating comment card,
       // which can otherwise intercept a click on the following highlighted line.
@@ -151,6 +155,56 @@
       Array.from(panel().querySelectorAll('button')).find(n => n.textContent.includes('B 独立笔记')).click();
       await wait(() => activeID() === b.id, 'standalone note not opened');
       assert(!panel(), 'chooser remains after selection'); noSidebarPanel();
+    });
+    await check('native preferences pane is registered and default trigger remains click', async () => {
+      assert(Z.PreferencePanes.pluginPanes.some(p => p.id === 'pdf2notelink-preferences'), 'preferences pane missing');
+      assert(HighlightNotes.Settings.mode(Z) === 'click', 'wrong default');
+    });
+    await check('modifier mode ordinary click keeps the note and shows the native annotation comment', async () => {
+      annotations[1].annotationComment = 'COMMENT_SENTINEL'; await annotations[1].saveTx();
+      await Z.Promise.delay(300);
+      setMode('modifier');
+      await click(1);
+      assert(activeID() === b.id && !panel(), 'ordinary click changed note');
+      assert(reader._iframeWindow.document.querySelector('.annotation-popup')?.textContent.includes('COMMENT_SENTINEL'), 'native comment missing');
+    });
+    await check('modifier click opens a single note and can repeat on an already selected highlight', async () => {
+      await click(1, { modifiers: modifier });
+      await wait(() => activeID() === c.id, 'modifier single note not opened');
+      await app.activate(reader, annotations[0].key);
+      panel().querySelector('button').click(); await wait(() => activeID() === a.id, 'setup note not opened');
+      await click(1, { modifiers: modifier });
+      await wait(() => activeID() === c.id, 'repeat modifier click failed');
+      assert(reader._internalReader._state.selectedAnnotationIDs.length === 1, 'modifier toggled selection off');
+    });
+    await check('modifier zero and multiple matches preserve collapsed sidebar and native comment popup', async () => {
+      win.ZoteroContextPane.collapsed = true;
+      await click(2, { modifiers: modifier });
+      assert(!panel() && win.ZoteroContextPane.collapsed, 'zero match changed sidebar');
+      await click(0, { modifiers: modifier });
+      await wait(() => panel()?.querySelectorAll('button').length === 2, 'modifier chooser missing');
+      assert(win.ZoteroContextPane.collapsed, 'modifier chooser expanded sidebar');
+      assert(reader._iframeWindow.document.querySelector('.annotation-popup'), 'native popup lost');
+    });
+    await check('changing preference closes chooser, invalidates pending requests and applies immediately', async () => {
+      const token = app.state(reader).token;
+      setMode('click');
+      assert(!panel() && app.state(reader).token > token, 'preference did not cancel old UI/request');
+      await click(1); await wait(() => activeID() === c.id, 'click mode did not resume');
+      setMode('modifier');
+      await click(0); assert(!panel() && activeID() === c.id, 'mode change not immediate');
+    });
+    await check('modifier drag and extra keys do not navigate; annotation sidebar retains native multi-selection', async () => {
+      await click(0, { modifiers: modifier, drag: true });
+      assert(!panel() && activeID() === c.id, 'modifier drag navigated');
+      await click(0, { modifiers: modifier | Components.interfaces.nsIDOMWindowUtils.MODIFIER_SHIFT });
+      assert(!panel() && activeID() === c.id, 'extra modifier navigated');
+      const internal = reader._internalReader;
+      const ids = key => Components.utils.cloneInto([key], reader._iframeWindow);
+      internal.setSelectedAnnotations(ids(annotations[0].key), false, new reader._iframeWindow.MouseEvent('mousedown'));
+      internal.setSelectedAnnotations(ids(annotations[1].key), false, new reader._iframeWindow.MouseEvent('mousedown', { metaKey: Z.isMac, ctrlKey: !Z.isMac }));
+      assert(internal._state.selectedAnnotationIDs.length === 2, 'sidebar multi-selection was overridden');
+      setMode('click');
     });
     await check('incremental edits/deletion/new notes update matches silently', async () => {
       b.setNote('<p>reference removed</p>'); await b.saveTx(); await app.queue;

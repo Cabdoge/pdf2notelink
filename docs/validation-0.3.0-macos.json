@@ -1,0 +1,90 @@
+{
+  "plugin_version": "0.3.0",
+  "zotero_version": "10.0.6",
+  "platform": "macOS",
+  "locale": "zh-CN",
+  "status": "complete",
+  "tests": [
+    {
+      "name": "zero matches stay silent and leave a collapsed sidebar collapsed",
+      "pass": true
+    },
+    {
+      "name": "multiple matches appear beside highlight without opening sidebar",
+      "pass": true
+    },
+    {
+      "name": "choosing a candidate opens native note and removes popup",
+      "pass": true
+    },
+    {
+      "name": "single match opens directly without a title or switching panel",
+      "pass": true
+    },
+    {
+      "name": "unmatched highlight keeps currently open note and no message",
+      "pass": true
+    },
+    {
+      "name": "drag and modified click do not change the current note",
+      "pass": true
+    },
+    {
+      "name": "Escape and user PDF scrolling dismiss the chooser",
+      "pass": true
+    },
+    {
+      "name": "standalone candidate opens without consuming sidebar space",
+      "pass": true
+    },
+    {
+      "name": "native preferences pane is registered and default trigger remains click",
+      "pass": true
+    },
+    {
+      "name": "modifier mode ordinary click keeps the note and shows the native annotation comment",
+      "pass": true
+    },
+    {
+      "name": "modifier click opens a single note and can repeat on an already selected highlight",
+      "pass": true
+    },
+    {
+      "name": "modifier zero and multiple matches preserve collapsed sidebar and native comment popup",
+      "pass": true
+    },
+    {
+      "name": "changing preference closes chooser, invalidates pending requests and applies immediately",
+      "pass": true
+    },
+    {
+      "name": "modifier drag and extra keys do not navigate; annotation sidebar retains native multi-selection",
+      "pass": true
+    },
+    {
+      "name": "incremental edits/deletion/new notes update matches silently",
+      "pass": true
+    },
+    {
+      "name": "rapid requests keep the last requested note",
+      "pass": true
+    },
+    {
+      "name": "native edits save and retain annotation metadata",
+      "pass": true
+    },
+    {
+      "name": "multiple tabs remain isolated and close stale chooser",
+      "pass": true
+    },
+    {
+      "name": "locating failure uses floating feedback and preserves correct note",
+      "pass": true
+    },
+    {
+      "name": "stop removes floating UI/listeners; restart opens single note silently",
+      "pass": true
+    }
+  ],
+  "windows_11": "pending native verification"
+}

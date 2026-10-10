@@ -26,13 +26,18 @@
       this.alive = false;
       this.adapter = new H.Adapter(Z,
         (reader, key, point) => this.activate(reader, key, point).catch(e => this.error(reader, e)),
-        reader => this.cancel(reader));
+        reader => this.cancel(reader), () => H.Settings.mode(this.Z));
     }
     get strings() {
       return UI_STRINGS[/^zh(?:[-_]|$)/i.test(this.Z.locale || "") ? "zh" : "en"];
     }
     start() {
+      if (this.alive) return;
       this.alive = true;
+      this.prefObserver = this.Z.Prefs.registerObserver(H.Settings.key, () => {
+        this.adapter.cancelGestures();
+        for (const state of this.windows.values()) { state.token++; state.dismiss?.(); }
+      }, true);
       this.observer = this.Z.Notifier.registerObserver({ notify: (event, type, ids) => {
         if (type === "tab") {
           for (const [win, state] of this.windows) {
@@ -241,6 +246,8 @@
     }
     stop() {
       this.alive = false;
+      if (this.prefObserver) this.Z.Prefs.unregisterObserver(this.prefObserver);
+      this.prefObserver = null;
       if (this.timer) this.clearInterval(this.timer);
       if (this.observer) this.Z.Notifier.unregisterObserver(this.observer);
       this.adapter.stop();

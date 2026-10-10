@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "pdf2notelink",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "点击 PDF 高亮，在原生侧栏打开引用它的 Zotero 笔记。",
   "applications": {
     "zotero": {

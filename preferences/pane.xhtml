@@ -1,0 +1,13 @@
+<vbox xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      onload="Zotero_Preferences.getScope('pdf2notelink-preferences').pdf2notelinkPreferences.init()">
+  <groupbox>
+    <html:h2 id="pdf2notelink-heading" />
+    <radiogroup id="pdf2notelink-trigger-mode" aria-labelledby="pdf2notelink-heading">
+      <radio id="pdf2notelink-click" value="click" />
+      <radio id="pdf2notelink-modifier" value="modifier" />
+    </radiogroup>
+    <description id="pdf2notelink-description" />
+    <description id="pdf2notelink-conflict" />
+  </groupbox>
+</vbox>

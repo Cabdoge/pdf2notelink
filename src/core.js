@@ -79,7 +79,13 @@
       !event.shiftKey && !event.ctrlKey && !event.metaKey && !event.altKey &&
       /^(pointerdown|pointerup|mousedown|mouseup|click)$/.test(event.type);
   }
-  const api = { decodeAnnotation, identity, referenceIdentity, extractReferences, ReverseIndex, plainPointer };
+  function triggerPointer(event, mode, isMac) {
+    if (!event || !event.isTrusted || event.button !== 0 || event.shiftKey || event.altKey ||
+        !/^(pointerdown|pointerup|mousedown|mouseup|click)$/.test(event.type)) return false;
+    if (mode !== "modifier") return !event.ctrlKey && !event.metaKey;
+    return isMac ? !!event.metaKey && !event.ctrlKey : !!event.ctrlKey && !event.metaKey;
+  }
+  const api = { decodeAnnotation, identity, referenceIdentity, extractReferences, ReverseIndex, plainPointer, triggerPointer };
   global.HighlightNotes = Object.assign(global.HighlightNotes || {}, api);
   if (typeof module !== "undefined") module.exports = api;
 })(typeof module !== "undefined" ? globalThis : this);

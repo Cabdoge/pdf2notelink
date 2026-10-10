@@ -1,6 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 require('../src/core.js');
+require('../src/settings.js');
 require('../src/adapter.js');
 require('../src/main.js');
 const App = global.HighlightNotes.App;

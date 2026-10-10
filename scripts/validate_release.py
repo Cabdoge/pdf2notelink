@@ -29,7 +29,7 @@ assert f'## {version}\n' in (root / 'CHANGELOG.md').read_text()
 artifact = root / 'dist' / f'pdf2notelink-{version}.xpi'
 with ZipFile(artifact) as archive:
     assert archive.testzip() is None
-    expected = {'manifest.json', 'bootstrap.js', 'src/core.js', 'src/adapter.js', 'src/main.js', 'LICENSE'}
+    expected = {'manifest.json', 'bootstrap.js', 'src/core.js', 'src/settings.js', 'src/adapter.js', 'src/main.js', 'prefs.js', 'preferences/pane.xhtml', 'preferences/pane.js', 'LICENSE'}
     assert set(archive.namelist()) == expected
     for name in expected:
         assert archive.read(name) == (root / name).read_bytes(), name + ' is stale'

@@ -3,10 +3,11 @@
   "use strict";
   const H = global.HighlightNotes;
   class Adapter {
-    constructor(Z, onClick, onActivity) {
+    constructor(Z, onClick, onActivity, getMode = () => "click") {
       this.Z = Z;
       this.onClick = onClick;
       this.onActivity = onActivity;
+      this.getMode = getMode;
       this.bindings = new Map();
     }
     scan() {
@@ -30,13 +31,26 @@
       let alive = true;
       const self = this;
       function wrapped(ids, fromView, event) {
+        const eventWindow = event?.target?.ownerDocument?.defaultView;
+        const win = eventWindow && typeof Components !== "undefined" ? Components.utils.unwaiveXrays(eventWindow) : eventWindow;
+        const g = views.get(win)?.gesture;
+        const matches = alive && fromView && g && self.getMode() === g.mode &&
+          H.triggerPointer(event, g.mode, self.Z.isMac) && ids.length === 1 && g.existing.has(ids[0]);
+        // Only this recognized PDF gesture gets single-selection semantics.
+        // Construct an event in the content compartment; never mutate the real
+        // trusted event or the keyboard manager's modifier state.
+        let nativeEvent = event;
+        if (matches && g.mode === "modifier" && !g.moved) {
+          nativeEvent = new win.MouseEvent(event.type, {
+            button: event.button, buttons: event.buttons, detail: event.detail,
+            clientX: event.clientX, clientY: event.clientY,
+            bubbles: event.bubbles, cancelable: event.cancelable,
+          });
+        }
         // Do not pass a privileged `arguments` object to a content-compartment
         // Function.apply: Gecko hides its indexed properties from the reader.
-        const result = original.call(this, ids, fromView, event);
-        if (!alive || !fromView || !H.plainPointer(event) || ids.length !== 1) return result;
-        const eventWindow = event.target?.ownerDocument?.defaultView;
-        const state = views.get(typeof Components !== "undefined" ? Components.utils.unwaiveXrays(eventWindow) : eventWindow);
-        if (state?.gesture && state.gesture.existing.has(ids[0])) state.gesture.id = ids[0];
+        const result = original.call(this, ids, fromView, nativeEvent);
+        if (matches) g.id = ids[0];
         return result;
       }
       internal.setSelectedAnnotations = wrapped;
@@ -50,10 +64,11 @@
           const down = event => {
             state.gesture = null;
             self.onActivity(reader);
-            if (!H.plainPointer(event) || !event.target?.closest?.(".page")) return;
+            const mode = self.getMode();
+            if (!H.triggerPointer(event, mode, self.Z.isMac) || !event.target?.closest?.(".page")) return;
             state.gesture = { x: event.clientX, y: event.clientY, pointer: event.pointerId,
               existing: new Set(internal._state.annotations.filter(a => a.type === "highlight").map(a => a.id)),
-              id: null, moved: false };
+              id: null, moved: false, mode };
           };
           const move = event => {
             const g = state.gesture;
@@ -68,12 +83,14 @@
             win.setTimeout(() => {
               if (!alive || state.gesture !== g) return;
               state.gesture = null;
-              if (!H.plainPointer(event) || g.moved || g.pointer !== event.pointerId || !g.id) return;
+              if (self.getMode() !== g.mode || !H.triggerPointer(event, g.mode, self.Z.isMac) ||
+                  g.moved || g.pointer !== event.pointerId || !g.id) return;
               const selected = internal._state.selectedAnnotationIDs;
               if (selected.length === 1 && selected[0] === g.id) self.onClick(reader, g.id, { win, x: event.clientX, y: event.clientY });
             }, 0);
           };
           for (const [type, fn] of [["pointerdown", down], ["pointermove", move], ["pointerup", up], ["pointercancel", cancel], ["dragstart", cancel]]) win.addEventListener(type, fn, true);
+          state.cancel = cancel;
           state.dispose = () => {
             cancel();
             for (const [type, fn] of [["pointerdown", down], ["pointermove", move], ["pointerup", up], ["pointercancel", cancel], ["dragstart", cancel]]) win.removeEventListener(type, fn, true);
@@ -81,13 +98,16 @@
           views.set(win, state);
         }
       }
-      this.bindings.set(reader, { internal, attachViews, dispose() {
+      this.bindings.set(reader, { internal, attachViews, cancel() {
+        for (const state of views.values()) state.cancel();
+      }, dispose() {
         alive = false;
         if (internal.setSelectedAnnotations === wrapped) internal.setSelectedAnnotations = original;
         for (const state of views.values()) state.dispose();
         views.clear();
       } });
     }
+    cancelGestures() { for (const binding of this.bindings.values()) binding.cancel(); }
     stop() { for (const b of this.bindings.values()) b.dispose(); this.bindings.clear(); }
     window(reader) { return reader._window; }
     isActive(reader) { return reader._window?.Zotero_Tabs?.selectedID === reader.tabID; }

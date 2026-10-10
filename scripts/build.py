@@ -10,7 +10,7 @@ version = manifest['version']
 repo = json.loads((root / 'package.json').read_text())['homepage']
 out = root / 'dist' / f'pdf2notelink-{version}.xpi'
 out.parent.mkdir(exist_ok=True)
-files = ['manifest.json', 'bootstrap.js', 'src/core.js', 'src/adapter.js', 'src/main.js', 'LICENSE']
+files = ['manifest.json', 'bootstrap.js', 'src/core.js', 'src/settings.js', 'src/adapter.js', 'src/main.js', 'prefs.js', 'preferences/pane.xhtml', 'preferences/pane.js', 'LICENSE']
 with ZipFile(out, 'w', ZIP_DEFLATED) as archive:
     for name in files:
         info = ZipInfo(name, (2026, 10, 9, 0, 0, 0))

@@ -39,7 +39,7 @@ startup = async function(data, reason) {
 };
 '''.replace('TEST_ROOT_VALUE', json.dumps(str(root)))
 with ZipFile(extensions / 'highlight-notes@local.zotero.xpi', 'w', ZIP_DEFLATED) as archive:
-    for name in ['manifest.json', 'src/core.js', 'src/adapter.js', 'src/main.js', 'tests/runtime.js']:
+    for name in ['manifest.json', 'src/core.js', 'src/settings.js', 'src/adapter.js', 'src/main.js', 'prefs.js', 'preferences/pane.xhtml', 'preferences/pane.js', 'tests/runtime.js']:
         archive.write(source / name, name)
     archive.writestr('bootstrap.js', bootstrap)
 
