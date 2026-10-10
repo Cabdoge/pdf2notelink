@@ -1,5 +1,9 @@
 # 验证记录
 
+## Windows 11：用户实测反馈
+
+用户确认插件在 Windows 11 上可以使用。此记录依据用户反馈；具体 Zotero / 插件版本及逐项测试场景尚未提供，因此不计入下方 macOS 自动化集成测试结果。中英文 README 已补充 Windows 11 可用说明，Zotero 安装版本范围保持 10.0.5–10.0.6。
+
 ## 0.2.2：英文界面与双语说明
 
 macOS / Zotero 10.0.6 / `en-US` 独立配置：14 项原生集成测试全部通过，包含多候选浮层、单篇跳转、无关联保持安静、编辑保存、多标签页、定位失败反馈和重新启用。机器可读结果见 [`docs/validation-0.2.2.json`](docs/validation-0.2.2.json)。实际运行记录中的候选标题为 `Linked notes · 2`，定位失败提示也为英文。
@@ -52,6 +56,6 @@ open -n -a /Applications/Zotero.app --args -no-remote -profile <脚本打印的�
 
 在测试目录中查看 `report.json`：`status` 应为 `complete`，全部 `tests[].pass` 应为 `true`。异常时检查 `startup-error.txt`。测试代码不会进入发行 XPI。完成后关闭测试实例，保留测试目录可供复查。
 
-未测试其他操作系统、独立阅读窗口或全部第三方插件组合；浮层仅添加自己的 DOM，不修改 Weavero 或 Zotero 的批注浮层。XPI 使用固定清单打包并验证内容一致性与 ZIP CRC。
+上述自动化集成测试仅在 macOS 执行；Windows 11 的用户实测反馈见本文开头。Linux、独立阅读窗口及全部第三方插件组合尚未验证。浮层仅添加自己的 DOM，不修改 Weavero 或 Zotero 的批注浮层。XPI 使用固定清单打包并验证内容一致性与 ZIP CRC。
 
 0.2.1 为公开发布配置更新，运行时 JS 与已验证的 0.2.0 一致；另行验证版本、更新地址、XPI 完整性、SHA-256 和发布 URL。CI 不替代 macOS / Zotero 图形环境集成测试。
