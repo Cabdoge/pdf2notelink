@@ -5,11 +5,7 @@
 - 自动测试：15 项通过，覆盖两种模式、Command／Ctrl 平台映射、额外修饰键、已选高亮重复点击、拖动和取消、设置变更时失效待处理手势／跳转、首选项回退和监听清理。
 - macOS / Zotero 10.0.6：20 项原生集成测试通过。新增组合键零／单／多匹配、普通点击保留笔记及原生评论、重复点击、设置即时生效，以及原生多选兼容。结果见 [`docs/validation-0.3.0-macos.json`](docs/validation-0.3.0-macos.json)。
 - 原生设置页实际操作确认默认直接点击、切换组合键模式及重启后保留设置；普通点击可以编辑并保存批注评论，Command＋点击同一高亮打开关联笔记。中英文页面使用独立演示配置截图。
-- Windows 11：新手势尚待原生验证，提供[检查步骤](docs/windows-0.3.0-checklist.md)。自动化中的 Ctrl 分支测试不替代 Windows 实际验证。0.3.0 已发布，Windows 验证结果待补充。
-
-## Windows 11：用户实测反馈
-
-用户确认插件在 Windows 11 上可以使用。此记录依据用户反馈；具体 Zotero / 插件版本及逐项测试场景尚未提供，因此不计入下方 macOS 自动化集成测试结果。中英文 README 已补充 Windows 11 可用说明，Zotero 安装版本范围保持 10.0.5–10.0.6。
+- Windows 11 / pdf2notelink 0.3.0：2026-10-11 收到实际使用验证通过的确认，覆盖本次 Ctrl＋点击触发方式更新。具体 Zotero 版本和逐项结果未单独记录；此确认不计入 macOS 自动化测试数量，也不代表下列检查项目均有独立记录。后续回归可使用 [Windows 检查步骤](docs/windows-0.3.0-checklist.md)。
 
 ## 0.2.2：英文界面与双语说明
 
@@ -63,6 +59,6 @@ open -n -a /Applications/Zotero.app --args -no-remote -profile <脚本打印的�
 
 在测试目录中查看 `report.json`：`status` 应为 `complete`，全部 `tests[].pass` 应为 `true`。异常时检查 `startup-error.txt`。测试代码不会进入发行 XPI。完成后关闭测试实例，保留测试目录可供复查。
 
-上述自动化集成测试仅在 macOS 执行；Windows 11 的用户实测反馈见本文开头。Linux、独立阅读窗口及全部第三方插件组合尚未验证。浮层仅添加自己的 DOM，不修改 Weavero 或 Zotero 的批注浮层。XPI 使用固定清单打包并验证内容一致性与 ZIP CRC。
+上述自动化集成测试仅在 macOS 执行；Windows 11 的验证记录见本文开头。Linux、独立阅读窗口及全部第三方插件组合尚未验证。浮层仅添加自己的 DOM，不修改 Weavero 或 Zotero 的批注浮层。XPI 使用固定清单打包并验证内容一致性与 ZIP CRC。
 
 0.2.1 为公开发布配置更新，运行时 JS 与已验证的 0.2.0 一致；另行验证版本、更新地址、XPI 完整性、SHA-256 和发布 URL。CI 不替代 macOS / Zotero 图形环境集成测试。

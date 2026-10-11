@@ -46,7 +46,7 @@ Changes apply immediately to all PDF tabs in the main window and persist after r
 
 ![Trigger options in Zotero's native pdf2notelink settings pane](docs/images/en/trigger-settings.jpg)
 
-Version 0.3.0 is available for download. The new Ctrl + click gesture is pending native verification on Windows 11.
+Command + click on macOS and Ctrl + click on Windows 11 are supported.
 
 ## Screenshots
 
@@ -101,11 +101,11 @@ Build outputs are in `dist/`: the XPI, `updates.json`, and `SHA256SUMS`.
 - `src/main.js`: index updates, the chooser, localization, and navigation.
 - `tests/`: automated tests and isolated Zotero integration tests.
 
-On macOS with a graphical session, run `python3 scripts/prepare-runtime.py` and launch the isolated profile using the printed command. Test data is written only to a newly created temporary directory. See the [test record](TESTING.md) and [0.2.2 integration results](docs/validation-0.2.2.json). CI runs automated tests and release package validation; it does not simulate Zotero's graphical environment.
+On macOS with a graphical session, run `python3 scripts/prepare-runtime.py` and launch the isolated profile using the printed command. Test data is written only to a newly created temporary directory. See the [test record](TESTING.md) and [0.3.0 macOS integration results](docs/validation-0.3.0-macos.json). CI runs automated tests and release package validation; it does not simulate Zotero's graphical environment.
 
 ## Releases
 
-Distribution uses GitHub Releases and Zotero's [manifest and automatic update format](https://www.zotero.org/support/dev/zotero_7_for_developers#update_rdf_updates_json). This project does not claim to be an official Zotero plugin or to have been accepted into an official or third-party plugin directory.
+Distribution uses GitHub Releases and Zotero's [manifest and automatic update format](https://www.zotero.org/support/dev/zotero_7_for_developers#update_rdf_updates_json). The plugin is listed in [Add-on Market for Zotero](https://github.com/syt2/zotero-addons), which periodically syncs GitHub Releases through its `addon-scraper` source.
 
 Maintainers update the version in `manifest.json`, `package.json`, and [CHANGELOG.md](CHANGELOG.md), verify compatibility, and push a `vVERSION` tag. The release workflow tests, builds, validates, and uploads the three release files. The update manifest includes the version, compatibility range, XPI download URL, and SHA-256. Expand the compatibility range only after testing the relevant Zotero versions.
 

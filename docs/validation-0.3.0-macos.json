@@ -85,6 +85,5 @@
       "name": "stop removes floating UI/listeners; restart opens single note silently",
       "pass": true
     }
-  ],
-  "windows_11": "pending native verification"
+  ]
 }

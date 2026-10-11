@@ -46,7 +46,7 @@
 
 ![Zotero 原生设置中的 pdf2notelink 触发方式选项](docs/images/trigger-settings.jpg)
 
-0.3.0 已提供下载。Windows 11 的 Ctrl＋点击新手势尚待原生环境验证。
+支持 macOS 的 Command＋点击和 Windows 11 的 Ctrl＋点击。
 
 ## 效果演示
 
@@ -105,7 +105,7 @@ macOS 图形环境可运行 `python3 scripts/prepare-runtime.py`，按输出启�
 
 ## 发布
 
-遵循 Zotero 的 [插件清单与自动更新格式](https://www.zotero.org/support/dev/zotero_7_for_developers#update_rdf_updates_json)，通过 GitHub Releases 分发。此项目没有被声称为 Zotero 官方插件，也不代表已收录到官方或第三方插件目录。
+遵循 Zotero 的 [插件清单与自动更新格式](https://www.zotero.org/support/dev/zotero_7_for_developers#update_rdf_updates_json)，通过 GitHub Releases 分发。插件已收录到 [Add-on Market for Zotero](https://github.com/syt2/zotero-addons)，市场通过 `addon-scraper` 数据源定期同步 GitHub Releases。
 
 维护者更新 `manifest.json`、`package.json` 与 [CHANGELOG.md](CHANGELOG.md) 中的版本，验证兼容性后推送 `v版本号` 标签。发布工作流会测试、构建、校验并上传三个发行文件；更新清单包含版本、兼容范围、XPI 下载链接和 SHA-256。只有通过验证的版本才应扩展兼容范围。
 
