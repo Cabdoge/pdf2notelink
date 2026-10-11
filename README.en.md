@@ -50,6 +50,8 @@ Command + click on macOS and Ctrl + click on Windows 11 are supported.
 
 ### Choose a reading position (0.4.0+)
 
+**Windows 11: the reading-position feature added in 0.4.0 has not yet been verified.** Validation is complete on macOS / Zotero 10.0.6.
+
 Open **Zotero Settings → pdf2notelink → Reading position when opening a note**:
 
 - **Go to the highlight reference:** the default; locate the first matching reference in the note.

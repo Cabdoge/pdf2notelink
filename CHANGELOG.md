@@ -5,7 +5,9 @@
 - 新增阅读位置设置：定位到高亮引用（默认），或每次从笔记开头阅读。
 - 与直接点击及 Command／Ctrl＋点击独立组合，设置立即保存、下次打开生效。
 - 阅读位置变更会取消待处理跳转并关闭候选浮层，不立即移动当前笔记。
-- 候选版本：Windows 11 新增阅读位置功能待验证。
+- 验证：20 项自动测试、macOS / Zotero 10.0.6 的 22 项原生集成测试通过。Windows 11 尚未验证本次新增阅读位置功能。
+
+Windows 11: the reading-position feature added in 0.4.0 has not yet been verified.
 
 ## 0.3.0
 
