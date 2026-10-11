@@ -35,7 +35,7 @@
 
 从 0.2.2 起，插件文案跟随 Zotero 的界面语言：中文界面显示中文，其他语言显示英文。切换 Zotero 语言并重启后生效。英文界面的真实截图见 [English README](README.en.md#screenshots)。
 
-### 选择触发方式（0.3.0 候选版）
+### 选择触发方式（0.3.0 起）
 
 在 **Zotero 设置 → pdf2notelink** 中选择“打开关联笔记的方式”：
 
@@ -46,7 +46,7 @@
 
 ![Zotero 原生设置中的 pdf2notelink 触发方式选项](docs/images/trigger-settings.jpg)
 
-0.3.0 目前为候选版本，Windows 11 新手势验证完成后发布正式版。正式版下载入口仍提供 0.2.2。
+0.3.0 已提供下载。Windows 11 的 Ctrl＋点击新手势尚待原生环境验证。
 
 ## 效果演示
 

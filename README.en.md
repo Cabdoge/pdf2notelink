@@ -35,7 +35,7 @@ Copying plain text does not establish a link. Older references containing only p
 
 Starting with 0.2.2, plugin labels follow Zotero's interface language: Chinese for a Chinese interface, and English for other languages. Change Zotero's language and restart Zotero to apply it.
 
-### Choose a trigger (0.3.0 candidate)
+### Choose a trigger (0.3.0+)
 
 Open **Zotero Settings → pdf2notelink** and choose how to open linked notes:
 
@@ -46,7 +46,7 @@ Changes apply immediately to all PDF tabs in the main window and persist after r
 
 ![Trigger options in Zotero's native pdf2notelink settings pane](docs/images/en/trigger-settings.jpg)
 
-Version 0.3.0 is a candidate pending verification of the new gesture on Windows 11. The stable download still provides 0.2.2.
+Version 0.3.0 is available for download. The new Ctrl + click gesture is pending native verification on Windows 11.
 
 ## Screenshots
 
