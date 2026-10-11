@@ -99,6 +99,5 @@
     "chinese_pane": "passed",
     "change_reading_position": "passed",
     "restart_persistence": "passed"
-  },
-  "windows_11": "pending 0.4.0 native verification"
+  }
 }

@@ -50,7 +50,7 @@
 
 ### 选择阅读起点（0.4.0 起）
 
-**Windows 11：0.4.0 新增的阅读位置功能尚未验证。** macOS / Zotero 10.0.6 已完成验证。
+阅读位置设置支持 macOS 和 Windows 11。
 
 在 **Zotero 设置 → pdf2notelink → 打开笔记后的阅读位置** 中选择：
 
