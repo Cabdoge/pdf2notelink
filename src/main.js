@@ -6,12 +6,14 @@
     en: {
       relatedNotes: "Linked notes",
       untitledNote: "Untitled note",
+      startFailed: "The note is open, but it could not be scrolled to the beginning.",
       locationFailed: "The note is open, but the reference could not be located.",
       openFailed: "Unable to open the linked note. Please try again.",
     },
     zh: {
       relatedNotes: "关联笔记",
       untitledNote: "无标题笔记",
+      startFailed: "笔记已打开，但未能滚动到开头。",
       locationFailed: "笔记已打开，但未能定位引用。",
       openFailed: "关联笔记打开失败，请重试。",
     },
@@ -34,10 +36,10 @@
     start() {
       if (this.alive) return;
       this.alive = true;
-      this.prefObserver = this.Z.Prefs.registerObserver(H.Settings.key, () => {
+      this.prefObservers = [H.Settings.key, H.Settings.positionKey].map(key => this.Z.Prefs.registerObserver(key, () => {
         this.adapter.cancelGestures();
-        for (const state of this.windows.values()) { state.token++; state.dismiss?.(); }
-      }, true);
+        for (const state of this.windows.values()) { state.token++; state.dismiss?.(); state.referenceAnimation?.cancel(); }
+      }, true));
       this.observer = this.Z.Notifier.registerObserver({ notify: (event, type, ids) => {
         if (type === "tab") {
           for (const [win, state] of this.windows) {
@@ -221,6 +223,8 @@
       if (!this.valid(reader, token)) return;
       token = ++this.state(reader).token;
       this.state(reader).dismiss?.();
+      this.state(reader).referenceAnimation?.cancel();
+      const position = H.Settings.position(this.Z);
       const note = await this.Z.Items.getAsync(match.id);
       if (!this.valid(reader, token)) return;
       if (!note || note.deleted || note.parentItem?.deleted) return;
@@ -229,16 +233,20 @@
         if (!this.valid(reader, token) || editor.item?.id !== note.id) return;
         const doc = this.adapter.editorDocument(editor);
         if (doc?.querySelector(".ProseMirror")) {
-          const nodes = this.adapter.referenceNodes(doc, id, uri => this.resolveURI(uri));
-          if (nodes.length) {
-            nodes[0].scrollIntoView({ block: "center", behavior: "instant" });
-            nodes[0].animate?.([{ outline: "2px solid #e49b16" }, { outline: "2px solid transparent" }], { duration: 1300 });
-            return;
+          if (position === "start") {
+            if (this.adapter.scrollToStart(doc)) return;
+          } else {
+            const nodes = this.adapter.referenceNodes(doc, id, uri => this.resolveURI(uri));
+            if (nodes.length) {
+              nodes[0].scrollIntoView({ block: "center", behavior: "instant" });
+              this.state(reader).referenceAnimation = nodes[0].animate?.([{ outline: "2px solid #e49b16" }, { outline: "2px solid transparent" }], { duration: 1300 });
+              return;
+            }
           }
         }
         await this.Z.Promise.delay(50);
       }
-      if (this.valid(reader, token)) this.popup(reader, this.strings.locationFailed);
+      if (this.valid(reader, token)) this.popup(reader, position === "start" ? this.strings.startFailed : this.strings.locationFailed);
     }
     error(reader, error) {
       this.Z.logError(error);
@@ -246,12 +254,12 @@
     }
     stop() {
       this.alive = false;
-      if (this.prefObserver) this.Z.Prefs.unregisterObserver(this.prefObserver);
-      this.prefObserver = null;
+      for (const observer of this.prefObservers || []) this.Z.Prefs.unregisterObserver(observer);
+      this.prefObservers = [];
       if (this.timer) this.clearInterval(this.timer);
       if (this.observer) this.Z.Notifier.unregisterObserver(this.observer);
       this.adapter.stop();
-      for (const state of this.windows.values()) { state.token++; state.dismiss?.(); }
+      for (const state of this.windows.values()) { state.token++; state.dismiss?.(); state.referenceAnimation?.cancel(); }
       this.windows.clear(); this.libraries.clear();
     }
   }

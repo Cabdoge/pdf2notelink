@@ -206,6 +206,43 @@
       assert(internal._state.selectedAnnotationIDs.length === 2, 'sidebar multi-selection was overridden');
       setMode('click');
     });
+    await check('reading position: long notes, repeated clicks, native save and both triggers', async () => {
+      const key = HighlightNotes.Settings.positionKey;
+      assert(HighlightNotes.Settings.position(Z) === 'reference', 'position default changed');
+      const image = await Z.Attachments.importEmbeddedImage({ parentItemID: c.id,
+        blob: new win.Blob(['<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100"><rect width="200" height="100" fill="gold"/></svg>'], { type: 'image/svg+xml' }) });
+      c.setNote('<div data-schema-version="9"><h1>Long reading note</h1><p><img data-attachment-key="' + image.key + '" width="200" height="100"></p>'  + '<p>Opening content for reading.</p>'.repeat(80) + reference(1) + '<p>Ending content.</p>'.repeat(30) + '</div>');
+      await c.saveTx(); await app.queue;
+      const doc = () => app.adapter.editorDocument(win.ZoteroContextPane.activeEditor);
+      const scroll = () => {
+        let n = doc().querySelector('.ProseMirror'); const nodes = [doc().scrollingElement];
+        while (n) { nodes.push(n); n = n.parentElement; }
+        return nodes.filter(Boolean);
+      };
+      for (const mode of ['click', 'modifier']) {
+        setMode(mode); const modifiers = mode === 'modifier' ? modifier : 0;
+        Z.Prefs.set(key, 'reference', true);
+        await click(1, { modifiers });
+        await wait(() => scroll().some(n => n.scrollTop > 100), 'reference not scrolled down');
+        await wait(() => doc().querySelector('img')?.complete && doc().querySelector('img')?.naturalWidth > 0, 'embedded note image did not load');
+        Z.Prefs.set(key, 'start', true);
+        assert(scroll().some(n => n.scrollTop > 100), 'setting itself moved the note');
+        for (let i = 0; i < 2; i++) {
+          await click(1, { modifiers });
+          await wait(() => scroll().every(n => n.scrollTop < 1), 'note did not return to beginning');
+          await Z.Promise.delay(350);
+          assert(scroll().every(n => n.scrollTop < 1), 'native scroll restoration overrode beginning');
+          for (const n of scroll()) if (n.scrollHeight > n.clientHeight) n.scrollTop = 500;
+        }
+        const before = c.getNote();
+        await click(2, { modifiers }); assert(activeID() === c.id && !panel(), 'unmatched click changed note');
+        await click(0, { modifiers }); await wait(() => panel(), 'multiple candidate chooser absent');
+        panel().querySelectorAll('button')[1].click();
+        await wait(() => activeID() === b.id && !panel(), 'standalone candidate not opened');
+        assert(c.getNote() === before, 'scrolling modified note HTML');
+      }
+      setMode('click'); Z.Prefs.set(key, 'reference', true);
+    });
     await check('incremental edits/deletion/new notes update matches silently', async () => {
       b.setNote('<p>reference removed</p>'); await b.saveTx(); await app.queue;
       await app.activate(reader, annotations[0].key);
@@ -250,6 +287,30 @@
         assert(text().includes(app.strings.locationFailed) && activeID() === c.id, 'failure feedback incorrect');
         noSidebarPanel();
       } finally { app.adapter.referenceNodes = find; }
+    });
+    await check('reading position changes cancel loading; beginning failure and lifecycle remain correct', async () => {
+      const key = HighlightNotes.Settings.positionKey;
+      const getDocument = app.adapter.editorDocument;
+      const toStart = app.adapter.scrollToStart;
+      Z.Prefs.set(key, 'start', true);
+      let delayed = false;
+      app.adapter.editorDocument = () => { delayed = true; return null; };
+      const pending = app.activate(reader, annotations[1].key);
+      await wait(() => delayed, 'loading not reached');
+      Z.Prefs.set(key, 'reference', true);
+      app.adapter.editorDocument = getDocument;
+      await pending; assert(!panel(), 'cancelled request produced feedback');
+      Z.Prefs.set(key, 'start', true);
+      app.adapter.scrollToStart = () => false;
+      try {
+        await app.activate(reader, annotations[1].key);
+        assert(text().includes(app.strings.startFailed), 'incorrect beginning failure');
+      } finally { app.adapter.scrollToStart = toStart; }
+      app.stop(); app = new HighlightNotes.App(Z); app.start();
+      assert(HighlightNotes.Settings.position(Z) === 'start', 'lifecycle lost reading preference');
+      await app.activate(reader, annotations[1].key);
+      assert(activeID() === c.id && !panel(), 'beginning failed after lifecycle restart');
+      Z.Prefs.set(key, 'reference', true);
     });
     await check('stop removes floating UI/listeners; restart opens single note silently', async () => {
       const wrapped = reader._internalReader.setSelectedAnnotations;

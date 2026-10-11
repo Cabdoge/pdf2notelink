@@ -4,6 +4,10 @@
   const strings = {
     en: {
       heading: "Open linked notes",
+      positionHeading: "Reading position when opening a note",
+      reference: "Go to the highlight reference",
+      start: "Read from the beginning",
+      positionDescription: "Applies the next time you open a linked note. Reading from the beginning returns to the top every time, including when the same note is already open.",
       click: "Click a highlight",
       modifierMac: "Command + click a highlight",
       modifierOther: "Ctrl + click a highlight",
@@ -12,6 +16,10 @@
     },
     zh: {
       heading: "打开关联笔记的方式",
+      positionHeading: "打开笔记后的阅读位置",
+      reference: "定位到高亮引用",
+      start: "从笔记开头阅读",
+      positionDescription: "下次打开关联笔记时生效。选择从开头阅读后，每次触发均回到顶部，包括已打开的同一篇笔记。",
       click: "直接点击高亮",
       modifierMac: "Command＋点击高亮",
       modifierOther: "Ctrl＋点击高亮",
@@ -21,6 +29,8 @@
   };
   H.Settings = {
     key: "extensions.pdf2notelink.triggerMode",
+    positionKey: "extensions.pdf2notelink.readingPosition",
+    position(Z) { return Z.Prefs.get(this.positionKey, true) === "start" ? "start" : "reference"; },
     mode(Z) { return Z.Prefs.get(this.key, true) === "modifier" ? "modifier" : "click"; },
     strings(Z) { return strings[/^zh(?:[-_]|$)/i.test(Z.locale || "") ? "zh" : "en"]; },
   };

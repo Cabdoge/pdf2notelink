@@ -10,6 +10,15 @@ var pdf2notelinkPreferences = {
     const group = document.getElementById("pdf2notelink-trigger-mode");
     group.value = HighlightNotes.Settings.mode(Zotero);
     group.addEventListener("command", () => this.change());
+    document.getElementById("pdf2notelink-position-heading").textContent = strings.positionHeading;
+    document.getElementById("pdf2notelink-reference").label = strings.reference;
+    document.getElementById("pdf2notelink-start").label = strings.start;
+    document.getElementById("pdf2notelink-position-description").textContent = strings.positionDescription;
+    const position = document.getElementById("pdf2notelink-reading-position");
+    position.value = HighlightNotes.Settings.position(Zotero);
+    position.addEventListener("command", () => {
+      Zotero.Prefs.set(HighlightNotes.Settings.positionKey, position.value === "start" ? "start" : "reference", true);
+    });
   },
   change() {
     const value = document.getElementById("pdf2notelink-trigger-mode").value;

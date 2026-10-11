@@ -158,6 +158,19 @@
       if (!instance || instance._item?.id !== editor.item?.id) return null;
       return editor._iframe?.contentDocument;
     }
+    scrollToStart(doc) {
+      const content = doc.querySelector(".ProseMirror");
+      if (!content) return false;
+      // The editor may scroll its document or a containing element. Reset only
+      // ancestors of the note body, without changing selection or note content.
+      const containers = new Set([doc.scrollingElement]);
+      for (let node = content; node; node = node.parentElement) containers.add(node);
+      for (const node of containers) {
+        if (!node) continue;
+        node.scrollTop = 0;
+      }
+      return Array.from(containers).every(node => !node || Math.abs(node.scrollTop) < 1);
+    }
     referenceNodes(doc, id, resolveURI) {
       // Zotero's highlight NodeView omits data-annotation in the editable DOM.
       // Read the ProseMirror node metadata via its view descriptor; never match text.

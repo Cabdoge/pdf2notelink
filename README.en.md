@@ -29,7 +29,7 @@ Drag a highlight into a Zotero note, or use Zotero's **Add Note from Annotations
 - **No linked note:** no extra message appears, and the sidebar stays as it is.
 - **One linked note:** the note opens directly at its reference, with no additional title bar.
 - **Several linked notes:** a list of note titles and reference excerpts appears beside the highlight. Selecting a note opens it and closes the chooser.
-- Clicking outside, pressing Esc, scrolling the PDF, or switching tabs closes the chooser. If a note references the same highlight several times, the first occurrence is selected.
+- Clicking outside, pressing Esc, scrolling the PDF, or switching tabs closes the chooser. In reference mode, if a note references the same highlight several times, the first occurrence is selected.
 
 Copying plain text does not establish a link. Older references containing only page numbers or coordinates, without an annotation key, cannot be matched precisely; drag the highlight into the note again to create a native reference. Manual binding, Obsidian/Markdown notes, links across libraries, and imported embedded PDF annotations are not currently supported.
 
@@ -44,9 +44,18 @@ Open **Zotero Settings → pdf2notelink** and choose how to open linked notes:
 
 Changes apply immediately to all PDF tabs in the main window and persist after restarting Zotero. In modifier mode, the shortcut replaces multi-selection on PDF highlights; the annotation sidebar retains native multi-selection. Dragging or holding extra keys such as Shift or Alt does not open linked notes.
 
-![Trigger options in Zotero's native pdf2notelink settings pane](docs/images/en/trigger-settings.jpg)
+![Trigger and reading position options in Zotero's native settings pane](docs/images/en/reading-position-settings.jpg)
 
 Command + click on macOS and Ctrl + click on Windows 11 are supported.
+
+### Choose a reading position (0.4.0+)
+
+Open **Zotero Settings → pdf2notelink → Reading position when opening a note**:
+
+- **Go to the highlight reference:** the default; locate the first matching reference in the note.
+- **Read from the beginning:** return to the top every time, even when the same note is already open.
+
+This setting works independently of the click trigger and also applies when choosing from several linked notes. It persists after restarting and takes effect the next time you open a linked note. Changing it does not move the current note or edit its content.
 
 ## Screenshots
 
@@ -101,7 +110,7 @@ Build outputs are in `dist/`: the XPI, `updates.json`, and `SHA256SUMS`.
 - `src/main.js`: index updates, the chooser, localization, and navigation.
 - `tests/`: automated tests and isolated Zotero integration tests.
 
-On macOS with a graphical session, run `python3 scripts/prepare-runtime.py` and launch the isolated profile using the printed command. Test data is written only to a newly created temporary directory. See the [test record](TESTING.md) and [0.3.0 macOS integration results](docs/validation-0.3.0-macos.json). CI runs automated tests and release package validation; it does not simulate Zotero's graphical environment.
+On macOS with a graphical session, run `python3 scripts/prepare-runtime.py` and launch the isolated profile using the printed command. Test data is written only to a newly created temporary directory. See the [test record](TESTING.md) and [0.4.0 macOS integration results](docs/validation-0.4.0-macos.json). CI runs automated tests and release package validation; it does not simulate Zotero's graphical environment.
 
 ## Releases
 
